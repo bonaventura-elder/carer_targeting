@@ -1,0 +1,6 @@
+.ipynb_checkpoints
+venv/
+shape_files/
+keys/
+**/__pycache__/**
+diagrams/

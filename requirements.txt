@@ -1,0 +1,17 @@
+catboost
+ipykernel
+ipywidgets
+jupyter
+matplotlib
+pandas
+pip
+numpy
+scikit-learn
+scikit-plot
+seaborn
+seaborn_qqplot
+shap
+sqlalchemy
+
+
+
