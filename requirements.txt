@@ -13,6 +13,8 @@ seaborn
 seaborn_qqplot
 shap
 sqlalchemy
+statsmodels
+
 
 
 
