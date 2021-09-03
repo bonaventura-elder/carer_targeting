@@ -1,3 +1,10 @@
 data/bulk_messages/carer_df_1909_2001.to_csv filter=lfs diff=lfs merge=lfs -text
 data/bulk_messages/carer_df_1909_2001.csv filter=lfs diff=lfs merge=lfs -text
 data/bulk_messages/carer_df_2001_2002.csv filter=lfs diff=lfs merge=lfs -text
+data/bulk_messages/carer_df_2002_2006.csv filter=lfs diff=lfs merge=lfs -text
+data/bulk_messages/output_files/carer_df_2103_2108.csv filter=lfs diff=lfs merge=lfs -text
+data/bulk_messages/output_files/carer_df_2101_2103.csv filter=lfs diff=lfs merge=lfs -text
+data/bulk_messages/output_files/carer_df_2006_2101.csv filter=lfs diff=lfs merge=lfs -text
+data/bulk_messages/output_files/carer_df_2002_2006.csv filter=lfs diff=lfs merge=lfs -text
+data/bulk_messages/output_files/carer_df_2001_2002.csv filter=lfs diff=lfs merge=lfs -text
+data/bulk_messages/output_files/carer_df_1909_2001.csv filter=lfs diff=lfs merge=lfs -text

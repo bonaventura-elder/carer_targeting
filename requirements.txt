@@ -3,9 +3,10 @@ ipykernel
 ipywidgets
 jupyter
 matplotlib
+numpy
 pandas
 pip
-numpy
+pymysql
 scikit-learn
 scikit-plot
 seaborn
