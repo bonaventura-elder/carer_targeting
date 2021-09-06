@@ -1,8 +1,17 @@
 # sketched plan of action
 - ## classification apps <- attributes
-    - ### placement attrs
-    - ### carer attrs
-    - ### nearby attrs
+    - ### placement and carer attrs
+        - age
+        - yrs of experience/on Elder
+        - type of soft preferences met 
+        - location/distance
+        - raw count/attributes of recent apps viewed/applied to
+        - attributes of placements stayed at for more than X weeks
+        - lead end of previous placement start of the new one
+        - SMS received for same placement
+    - ### attrs of nearby placements
+        - carers willing to apply to similar (time/location wise) placements
+        - carers willing to apply to placements closer to them
     - ###interactions
 - ## recommender placement attributes -> apps
 - ## recommender carer attributes -> apps (cold start)
