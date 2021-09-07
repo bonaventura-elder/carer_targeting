@@ -9,3 +9,8 @@ data/bulk_messages/output_files/carer_df_2002_2006.csv filter=lfs diff=lfs merge
 data/bulk_messages/output_files/carer_df_2001_2002.csv filter=lfs diff=lfs merge=lfs -text
 data/bulk_messages/output_files/carer_df_1909_2001.csv filter=lfs diff=lfs merge=lfs -text
 data/training_data.csv filter=lfs diff=lfs merge=lfs -text
+data/training_data_v2.csv filter=lfs diff=lfs merge=lfs -text
+data/prefs_data_v2.csv filter=lfs diff=lfs merge=lfs -text
+data/login_data.csv filter=lfs diff=lfs merge=lfs -text
+data/worked_data.csv filter=lfs diff=lfs merge=lfs -text
+data/dist_data.csv filter=lfs diff=lfs merge=lfs -text
