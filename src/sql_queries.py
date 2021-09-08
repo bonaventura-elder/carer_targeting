@@ -250,7 +250,7 @@ WHERE s.placement_ad_id IS NOT NULL
     SELECT MAX(cal2.timestamp)
     FROM live_STATS_CARER_ACCOUNT_LOGS cal2
     WHERE s.carer_id = cal2.carer_id
-      AND s.sent_at >= cal2.timestamp
+      AND s.sent_at > cal2.timestamp
     )
 '''
 
@@ -332,3 +332,93 @@ WHERE s.placement_ad_id IS NOT NULL
     )
 '''
 
+days_worked_query = '''
+ SELECT
+                       d.date,
+                       v.professional_id as carer_id,
+                       count(*) as days_worked_past_90
+                FROM dates d
+                LEFT JOIN (
+                    SELECT
+                           date(start_date_time) as work_date,
+                           professional_id
+                    FROM live_STATS_NON_CANCELLED_VISITS
+                    WHERE start_date_time >= '2019-7-01' and start_date_time <= '2021-08-17'
+                    and professional_id IS NOT NULL
+                        ) v on d.date> v.work_date AND date_add(d.date, INTERVAL -90 day) <= v.work_date
+                WHERE d.date >= '2019-10-01' and d.date <= '2021-08-17'
+                GROUP BY 1,2
+'''
+
+apps_done_query = '''
+ SELECT
+       d.date,
+       v.carer_id,
+       count(*) as apps_past_7_days
+FROM dates d
+LEFT JOIN (
+    SELECT
+           date(valid_from) as work_date,
+           carer_id
+    FROM live_STATS_MATCHING_PLACEMENT_AD_APPLICATION
+    WHERE valid_from >= '2019-9-01' and valid_from <= '2021-08-17'
+    and carer_id IS NOT NULL
+        ) v on d.date > v.work_date AND date_add(d.date, INTERVAL -7 day) <= v.work_date
+WHERE d.date >= '2019-10-01' and d.date <= '2021-08-17'
+GROUP BY 1,2
+'''
+
+logs_done_query = '''
+ SELECT
+       d.date,
+       v.carer_id,
+       count(*) as login_past_7_days
+FROM dates d
+LEFT JOIN (
+    SELECT
+           date(timestamp) as work_date,
+           carer_id
+    FROM live_STATS_CARER_ACCOUNT_LOGS
+    WHERE timestamp >= '2019-9-01' and timestamp <= '2021-08-17' AND event_type = 'LOGIN' and impersonated != 1
+    and carer_id IS NOT NULL
+        ) v on d.date> v.work_date AND date_add(d.date, INTERVAL -7 day) <= v.work_date
+WHERE d.date >= '2019-10-01' and d.date <= '2021-08-17'
+GROUP BY 1,2
+'''
+
+texts_received_query = '''
+ SELECT
+       d.date,
+       v.carer_id,
+        COUNT(*) as texts_past_30_days
+FROM dates d
+LEFT JOIN (
+    SELECT
+           date(sent_at) as work_date,
+           carer_id
+    FROM (
+        SELECT
+               carer_id,
+               sent_at
+        FROM live_STATS_MATCHING_MATCH_REQUEST_CARER_SMS
+        UNION
+        SELECT
+               carer_id,
+               sent_at
+        FROM live_MO_CUSTOM_LIST_MATCH_REQUEST_CARER_SMS
+             ) s
+    WHERE sent_at >= '2019-09-01' and sent_at <= '2021-08-17'
+    and carer_id IS NOT NULL
+        ) v on d.date > v.work_date AND date_add(d.date, INTERVAL -30 day) <= v.work_date
+WHERE d.date >= '2019-09-01' and d.date <= '2021-08-17'
+GROUP BY 1,2
+'''
+
+logins_events_query = '''
+SELECT
+   date(timestamp) as work_date,
+   carer_id
+FROM live_STATS_CARER_ACCOUNT_LOGS
+WHERE timestamp >= '2019-9-01' and timestamp <= '2021-08-17' AND event_type = 'LOGIN' and impersonated != 1
+and carer_id IS NOT NULL
+'''
