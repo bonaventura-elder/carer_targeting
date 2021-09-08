@@ -109,6 +109,7 @@ SELECT DISTINCT
     if(smokingClientsExclusion IS NULL,0,smokingClientsExclusion) as smokingClientsExclusion,
    if(has_licence IS NULL,0,has_licence) AS has_licence,
    if(has_car IS NULL,0,has_car) as has_car,
+<<<<<<< HEAD
    if(moving_handling IS NULL,0,moving_handling) as moving_handling,
    if(dementia IS NULL,0,dementia) as dementia,
    if(mental_health_issues IS NULL,0, mental_health_issues) as mental_health_issues,
@@ -119,6 +120,37 @@ SELECT DISTINCT
    if(stoma IS NULL,0,stoma) as stoma,
    if(diabetes IS NULL,0,diabetes) AS diabetes,
    if(peg IS NULL,0,peg) AS peg
+=======
+   if(moving_handling IS NULL,0,moving_handling) as carer_moving_handling,
+   if(dementia IS NULL,0,dementia) as carer_dementia,
+   if(mental_health_issues IS NULL,0, mental_health_issues) as carer_mental_health_issues,
+   if(hoist IS NULL,0, hoist) as carer_hoist,
+   if(parkinsons IS NULL,0, parkinsons) as carer_parkinsons,
+   if(stroke IS NULL,0, stroke) as carer_stroke,
+   if(alzheimers IS NULL,0,alzheimers) as carer_alzheimers,
+   if(stoma IS NULL,0,stoma) as carer_stoma,
+   if(diabetes IS NULL,0,diabetes) AS carer_diabetes,
+   if(peg IS NULL,0,peg) AS carer_peg,
+   CASE
+       WHEN p.date_of_birth < DATE_SUB(sent_at, INTERVAL 365.25*80 DAY) OR  
+            p.date_of_birth > DATE_SUB(sent_at, INTERVAL 365.25*18 DAY) THEN NULL
+       ELSE DATEDIFF(sent_at,p.date_of_birth)/365.25
+   END as carer_age,
+      GREATEST(
+                LOG(
+                    CASE
+                       WHEN p.date_of_birth > p.created_at OR
+                            p.career_start_date > p.created_at OR
+                            p.date_of_birth > DATE_SUB(p.created_at, INTERVAL 365.25*18 DAY) THEN NULL
+                       WHEN p.date_of_birth <= p.career_start_date AND p.career_start_date < DATE_ADD(p.date_of_birth, INTERVAL 365.25*18 DAY)
+                           THEN DATEDIFF(sent_at,DATE_ADD(p.date_of_birth, INTERVAL 365.25*18 DAY))/365.25
+                       ELSE DATEDIFF(sent_at,p.career_start_date)/365.25
+                    END
+                    )
+                    ,0) as log_career_years_of_experience,
+    GREATEST(LOG(DATEDIFF(sent_at,p.activated_at)/365.25),0) as log_years_on_elder,
+    if(p.gender = 'FEMALE',1,0) as carer_gender_FEMALE
+>>>>>>> 569f04e (fixed fileds)
 FROM
      (
          SELECT
@@ -161,6 +193,11 @@ LEFT JOIN
     group by carer_id, set_at
     ) prefs
 ON (s.carer_id = prefs.carer_id and s.sent_at>=prefs.set_at)
+<<<<<<< HEAD
+=======
+LEFT JOIN live_STATS_PROFESSIONAL p
+ON s.carer_id = p.professional_id
+>>>>>>> 569f04e (fixed fileds)
 LEFT JOIN (
     SELECT DISTINCT
         carer_id,
@@ -274,7 +311,10 @@ WHERE s.placement_ad_id IS NOT NULL AND
 
 worked_query = '''
 SELECT DISTINCT s.placement_ad_id,
+<<<<<<< HEAD
                s.match_request_id,
+=======
+>>>>>>> 569f04e (fixed fileds)
                s.carer_id,
                sent_at,
                start_date_time,

@@ -3,6 +3,7 @@ ipykernel
 ipywidgets
 jupyter
 matplotlib
+nbdime
 numpy
 pandas
 pip
