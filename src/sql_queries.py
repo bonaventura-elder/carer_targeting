@@ -109,18 +109,6 @@ SELECT DISTINCT
     if(smokingClientsExclusion IS NULL,0,smokingClientsExclusion) as smokingClientsExclusion,
    if(has_licence IS NULL,0,has_licence) AS has_licence,
    if(has_car IS NULL,0,has_car) as has_car,
-<<<<<<< HEAD
-   if(moving_handling IS NULL,0,moving_handling) as moving_handling,
-   if(dementia IS NULL,0,dementia) as dementia,
-   if(mental_health_issues IS NULL,0, mental_health_issues) as mental_health_issues,
-   if(hoist IS NULL,0, hoist) as hoist,
-   if(parkinsons IS NULL,0, parkinsons) as parkinsons,
-   if(stroke IS NULL,0, stroke) as stroke,
-   if(alzheimers IS NULL,0,alzheimers) as alzheimers,
-   if(stoma IS NULL,0,stoma) as stoma,
-   if(diabetes IS NULL,0,diabetes) AS diabetes,
-   if(peg IS NULL,0,peg) AS peg
-=======
    if(moving_handling IS NULL,0,moving_handling) as carer_moving_handling,
    if(dementia IS NULL,0,dementia) as carer_dementia,
    if(mental_health_issues IS NULL,0, mental_health_issues) as carer_mental_health_issues,
@@ -150,7 +138,6 @@ SELECT DISTINCT
                     ,0) as log_career_years_of_experience,
     GREATEST(LOG(DATEDIFF(sent_at,p.activated_at)/365.25),0) as log_years_on_elder,
     if(p.gender = 'FEMALE',1,0) as carer_gender_FEMALE
->>>>>>> 569f04e (fixed fileds)
 FROM
      (
          SELECT
@@ -193,11 +180,8 @@ LEFT JOIN
     group by carer_id, set_at
     ) prefs
 ON (s.carer_id = prefs.carer_id and s.sent_at>=prefs.set_at)
-<<<<<<< HEAD
-=======
 LEFT JOIN live_STATS_PROFESSIONAL p
 ON s.carer_id = p.professional_id
->>>>>>> 569f04e (fixed fileds)
 LEFT JOIN (
     SELECT DISTINCT
         carer_id,
@@ -311,10 +295,6 @@ WHERE s.placement_ad_id IS NOT NULL AND
 
 worked_query = '''
 SELECT DISTINCT s.placement_ad_id,
-<<<<<<< HEAD
-               s.match_request_id,
-=======
->>>>>>> 569f04e (fixed fileds)
                s.carer_id,
                sent_at,
                start_date_time,
