@@ -386,6 +386,7 @@ WHERE d.date >= '2019-10-01' and d.date <= '2021-08-17'
 GROUP BY 1,2
 '''
 
+
 texts_received_query = '''
  SELECT
        d.date,
@@ -416,9 +417,88 @@ GROUP BY 1,2
 
 logins_events_query = '''
 SELECT
-   date(timestamp) as work_date,
-   carer_id
-FROM live_STATS_CARER_ACCOUNT_LOGS
-WHERE timestamp >= '2019-9-01' and timestamp <= '2021-08-17' AND event_type = 'LOGIN' and impersonated != 1
-and carer_id IS NOT NULL
+    d.date,
+    professional_id as carer_id,
+    DATEDIFF(d.date,p.activated_at)/30 as months_from_activation,
+    IF(l.timestamp IS NOT NULL, 1,0) as logged_in
+FROM dates d
+LEFT JOIN live_STATS_PROFESSIONAL p
+ON  d.date >= DATE(p.activated_at)
+LEFT JOIN live_STATS_CARER_ACCOUNT_LOGS l
+ON (d.date = DATE(l.timestamp) and professional_id = l.carer_id)
+WHERE
+    d.date >= '2019-10-01'
+    AND d.date <= '2021-08-17'
+    AND (event_type IS NULL OR event_type = 'LOGIN')
+    AND (impersonated IS NULL OR impersonated != 1)
+    AND activated_at IS NOT NULL
+'''
+
+
+views_done_query = '''
+SELECT
+    d.date,
+    l.carer_id,
+    COUNT(*) as viewed_placements_past_7_days
+FROM dates d
+LEFT JOIN live_MO_AMPLITUDE_VIEWED_PLACEMENTS l
+ON (d.date > l.date AND date_add(d.date, INTERVAL -7 day) <= l.date)
+WHERE
+    d.date >= '2019-10-01'
+    AND d.date <= '2021-08-17'
+GROUP BY 1,2
+'''
+
+pvs_query = '''
+ SELECT
+       s.carer_id,
+       sent_at,
+        predicted_value
+FROM (
+        SELECT DISTINCT
+               carer_id,
+               sent_at
+        FROM live_STATS_MATCHING_MATCH_REQUEST_CARER_SMS
+        UNION
+        SELECT DISTINCT
+               carer_id,
+               sent_at
+        FROM live_MO_CUSTOM_LIST_MATCH_REQUEST_CARER_SMS
+             ) s
+LEFT JOIN live_STATS_PER_APPLICANT_PREDICTED_VALUE_SCORES pvs
+ON (s.carer_id = pvs.carer_id AND pvs.prediction_date = DATE(sent_at))
+WHERE sent_at >= '2019-10-01' and sent_at <= '2021-08-17'
+and s.carer_id IS NOT NULL
+'''
+
+md_query = '''
+ SELECT
+       s.carer_id,
+       sent_at,
+        placement_ad_id,
+        difficulty_normalised
+FROM (
+        SELECT DISTINCT
+               carer_id,
+               sent_at,
+                placement_ad_id,
+              SUBSTRING(SUBSTRING(placement_ad_id, 6), 1,
+                         CHAR_LENGTH(SUBSTRING(placement_ad_id, 6)) - 5) as match_request_id
+        FROM live_STATS_MATCHING_MATCH_REQUEST_CARER_SMS
+        UNION
+        SELECT DISTINCT
+               carer_id,
+               sent_at,
+                        placement_ad_id,
+              SUBSTRING(SUBSTRING(placement_ad_id, 6), 1,
+                         CHAR_LENGTH(SUBSTRING(placement_ad_id, 6)) - 5) as match_request_id
+        FROM live_MO_CUSTOM_LIST_MATCH_REQUEST_CARER_SMS
+             ) s
+LEFT JOIN live_STATS_MATCHING_DIFFICULTY md
+ON (s.match_request_id = md.match_request_id)
+WHERE
+      sent_at >= '2019-10-01'
+  and sent_at <= '2021-08-17'
+and placement_ad_id IS NOT NULL
+and s.carer_id IS NOT NULL
 '''

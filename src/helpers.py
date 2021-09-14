@@ -21,6 +21,9 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.feature_selection import SequentialFeatureSelector
 import random
 from datetime import datetime, date
+import warnings
+warnings.filterwarnings('ignore')
+
 
 def select_features(model, n_features, y, X, scoring=None):
     results = []
@@ -38,7 +41,7 @@ def select_features(model, n_features, y, X, scoring=None):
         print(f'Selected features: {features}')
         X_selected = X[features]
         score = cross_val_score(model, X_selected, y, cv=cv, scoring=scoring)
-        print(f'Fit summary: {np.mean(score)} ({min(score)} to {max(score)})')
+        print(f'Fit summary: {round(np.mean(score),5)} ({round(min(score),5)} to {round(max(score),5)})')
         results.append({'n': n, 'cv_score': np.mean(score), 'features': features})
 
     return pd.DataFrame(results)
@@ -131,3 +134,7 @@ def plot_shap_metrics(model, data, predictors, target, shuffle=True, export_dir=
 
     if export_dir is not None:
         plt.savefig(f'{export_dir}/shap_metrics_on_{date.today()}.png')
+
+
+
+
