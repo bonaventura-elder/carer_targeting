@@ -334,20 +334,20 @@ WHERE s.placement_ad_id IS NOT NULL
 
 days_worked_query = '''
  SELECT
-                       d.date,
-                       v.professional_id as carer_id,
-                       count(*) as days_worked_past_90
-                FROM dates d
-                LEFT JOIN (
-                    SELECT
-                           date(start_date_time) as work_date,
-                           professional_id
-                    FROM live_STATS_NON_CANCELLED_VISITS
-                    WHERE start_date_time >= '2019-7-01' and start_date_time <= '2021-08-17'
-                    and professional_id IS NOT NULL
-                        ) v on d.date> v.work_date AND date_add(d.date, INTERVAL -90 day) <= v.work_date
-                WHERE d.date >= '2019-10-01' and d.date <= '2021-08-17'
-                GROUP BY 1,2
+       d.date,
+       v.professional_id as carer_id,
+       count(*) as days_worked_past_90
+FROM dates d
+LEFT JOIN (
+    SELECT
+           date(start_date_time) as work_date,
+           professional_id
+    FROM live_STATS_NON_CANCELLED_VISITS
+    WHERE start_date_time >= '2019-7-01' and start_date_time <= '2021-08-17'
+    and professional_id IS NOT NULL
+        ) v on d.date> v.work_date AND date_add(d.date, INTERVAL -90 day) <= v.work_date
+WHERE d.date >= '2019-10-01' and d.date <= '2021-08-17'
+GROUP BY 1,2
 '''
 
 apps_done_query = '''
