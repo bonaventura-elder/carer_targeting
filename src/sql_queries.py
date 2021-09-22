@@ -4,6 +4,7 @@ SELECT DISTINCT
     s.placement_ad_id,
     s.match_request_id,
     s.carer_id,
+    dob.customer_id,
     sent_at,
     h.updated_at,
     sms_type,
@@ -63,6 +64,7 @@ ON (s.placement_ad_id = h.placement_ad_id)
 LEFT JOIN (
     select
            mr.match_request_id,
+           c.customer_id,
            if(recipient_2_date_of_birth IS NOT NULL,LEAST(recipient_1_date_of_birth, recipient_2_date_of_birth),recipient_1_date_of_birth) as max_date_of_birth,
            gender as recipient_1_gender,
            ethnicities_at_risk
@@ -501,4 +503,21 @@ WHERE
   and sent_at <= '2021-08-17'
 and placement_ad_id IS NOT NULL
 and s.carer_id IS NOT NULL
+'''
+
+customer_popularity_query = '''
+select DISTINCT
+    DATE_FORMAT(d.date,'%%Y-%%m-%%d') as `date`,
+    T1.customer_id,
+   popularity_score
+FROM dates as d
+left join live_STATS_CUSTOMER_HISTORY as T1
+    on DATE_FORMAT(d.date,'%%Y-%%m-%%d') = DATE_FORMAT(T1.updated_at,'%%Y-%%m-%%d')
+left join live_STATS_CUSTOMERS c
+ON c.customer_id = T1.customer_id
+where
+    d.date<'2021-08-18'
+    AND d.date>='2019-10-01'
+    AND d.date <= c.archive_date
+    AND d.date >= c.first_carer_signed_off_at
 '''
