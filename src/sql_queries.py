@@ -261,7 +261,13 @@ SELECT DISTINCT
     s.placement_ad_id,
     s.carer_id,
     sent_at,
-    t.distance_km
+    t.distance_km,
+    69.0 * DEGREES(ACOS(LEAST(COS(RADIANS(h.latitude))
+                               * COS(RADIANS(s.latitude))
+                               * COS(RADIANS(h.longitude - s.longitude))
+                               + SIN(RADIANS(h.latitude))
+                               * SIN(RADIANS(s.latitude)), 1.0))
+                        ) AS distance_to_id
 FROM
      (
          SELECT
@@ -269,6 +275,8 @@ FROM
                 carer_id,
                 sent_at,
                 sms_type,
+                latitude,
+                longitude,
                 UPPER(postcode_area) as postcode_area
          FROM live_STATS_MATCHING_MATCH_REQUEST_CARER_SMS
          LEFT JOIN live_STATS_PROFESSIONAL p
@@ -279,6 +287,8 @@ FROM
                 carer_id,
                 sent_at,
                 sms_type,
+                latitude,
+                longitude,
                 UPPER(postcode_area) as postcode_area
          FROM live_MO_CUSTOM_LIST_MATCH_REQUEST_CARER_SMS
          LEFT JOIN live_STATS_PROFESSIONAL p
@@ -507,14 +517,14 @@ and s.carer_id IS NOT NULL
 
 customer_popularity_query = '''
 select DISTINCT
-    DATE_FORMAT(d.date,'%%Y-%%m-%%d') as `date`,
-    T1.customer_id,
-   popularity_score
+    DATE_FORMAT(d.date,'%%Y-%%m-%%d') as `date`
+    ,c.customer_id
+    , popularity_score
 FROM dates as d
-left join live_STATS_CUSTOMER_HISTORY as T1
-    on DATE_FORMAT(d.date,'%%Y-%%m-%%d') = DATE_FORMAT(T1.updated_at,'%%Y-%%m-%%d')
 left join live_STATS_CUSTOMERS c
-ON c.customer_id = T1.customer_id
+ON d.date >= DATE(c.first_carer_signed_off_at)
+left join live_STATS_CUSTOMER_HISTORY as h
+    on (DATE_FORMAT(d.date,'%%Y-%%m-%%d') = DATE_FORMAT(h.updated_at,'%%Y-%%m-%%d') AND c.customer_id = h.customer_id)
 where
     d.date<'2021-08-18'
     AND d.date>='2019-10-01'
