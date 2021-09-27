@@ -16,6 +16,8 @@ shap
 sqlalchemy
 statsmodels
 xgboost
+catboost
+
 
 
 
