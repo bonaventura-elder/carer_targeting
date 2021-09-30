@@ -7,6 +7,7 @@ nbdime
 numpy
 pandas
 pip
+pygsheets
 pymysql
 scikit-learn
 scikit-plot
@@ -16,7 +17,7 @@ shap
 sqlalchemy
 statsmodels
 xgboost
-catboost
+
 
 
 
